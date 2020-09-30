@@ -1,0 +1,14 @@
+height: 8
+       #
+      ##
+     ###
+    ####
+   #####
+  ######
+ #######
+########
+
+the height is equal to width
+
+ask user for a positive height
+for each row from 1 through height print height - row spaces (" ") and "row" columns ("#")
