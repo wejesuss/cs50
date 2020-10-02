@@ -1,3 +1,4 @@
+less comfortable:
 height: 8
        #
       ##
@@ -8,7 +9,30 @@ height: 8
  #######
 ########
 
+row-spaces = height - row
 the height is equal to width
 
 ask user for a positive height
-for each row from 1 through height print height - row spaces (" ") and "row" columns ("#")
+for each row from 1 through height print row-spaces spaces (" ") and "row" columns ("#")
+
+more comfortable:
+height: 8
+       #  #
+      ##  ##
+     ###  ###
+    ####  ####
+   #####  #####
+  ######  ######
+ #######  #######
+########  ########
+
+gap = 2
+the width is equal to height + row + gap
+row-spaces = height - row
+
+ask user for a positive height
+for each row from 1 through height
+    print row-spaces spaces (" ") and "row" columns ("#")
+    print gap spaces
+    print "row" columns ("#")
+
