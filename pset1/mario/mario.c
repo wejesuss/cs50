@@ -7,21 +7,33 @@ int main(void)
 {
     int minimum = 1;
     int max = 8;
-    int height = get_positive_int("Write a number between %i and %i: ", 1, 8);
+    int height = get_positive_int("Write the height from %i to %i: ", 1, 8);
+    int gap = 2;
 
-    for (int i = 1; i <= height; i++)
+    for (int row = 1; row <= height; row++)
     {
-        for (int j = 1; j <= height; j++)
-        {
-            int max_spaces_to_print = height - i;
+        int width = height + row + gap;
+        int max_spaces_to_print = height - row;
 
-            if (j <= max_spaces_to_print)
+        for (int column = 1; column <= width; column++)
+        {
+
+            if (column <= max_spaces_to_print)
             {
                 printf(" ");
             }
             else
             {
-                printf("#");
+                bool should_print_gap = column > height && column <= height + gap;
+
+                if (should_print_gap)
+                {
+                    printf(" ");
+                }
+                else
+                {
+                    printf("#");
+                }
             }
         }
         printf("\n");
