@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 string encrypt_text(string plaintext, int key);
+int calculate_secure_sum(char c, int key);
 
 int main(int argc, string argv[])
 {
@@ -41,15 +42,7 @@ string encrypt_text(string plaintext, int key)
         char c = plaintext[i];
         if (isalpha(c))
         {
-            int limit_to_sum;
-            if (islower(c))
-            {
-                limit_to_sum = 122 - key;
-            }
-            else
-            {
-                limit_to_sum = 90 - key;
-            }
+            int limit_to_sum = calculate_secure_sum(c, key);
 
             if ((int) c <= limit_to_sum)
             {
@@ -67,4 +60,19 @@ string encrypt_text(string plaintext, int key)
     }
 
     return ciphertext;
+}
+
+int calculate_secure_sum(char c, int key)
+{
+    int lowercase_z_in_decimal = 122;
+    int uppercase_z_in_decimal = 90;
+
+    if (islower(c))
+    {
+        return lowercase_z_in_decimal - key;
+    }
+    else
+    {
+        return uppercase_z_in_decimal - key;
+    }
 }
