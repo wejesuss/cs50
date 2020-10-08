@@ -6,7 +6,8 @@
 
 string encrypt_text(string plaintext, int key);
 int calculate_secure_sum(char c, int key);
-char encrypt_character(char c, int limit_to_sum, int key);
+char encrypt_alphabetic_character(char c, int limit_to_sum, int key);
+char encrypt_alphabetic_and_non_alphabetic(char c, int key);
 
 int main(int argc, string argv[])
 {
@@ -41,21 +42,24 @@ string encrypt_text(string plaintext, int key)
     for (int i = 0, length = strlen(plaintext); i < length; i++)
     {
         char c = plaintext[i];
-        if (isalpha(c))
-        {
-            int limit_to_sum = calculate_secure_sum(c, key);
-            ciphertext[i] = encrypt_character(c, limit_to_sum, key);
-        }
-        else
-        {
-            ciphertext[i] = c;
-        }
+        ciphertext[i] = encrypt_alphabetic_and_non_alphabetic(c, key);
     }
 
     return ciphertext;
 }
 
-char encrypt_character(char c, int limit_to_sum, int key)
+char encrypt_alphabetic_and_non_alphabetic(char c, int key)
+{
+    if (isalpha(c))
+    {
+        int limit_to_sum = calculate_secure_sum(c, key);
+        return encrypt_alphabetic_character(c, limit_to_sum, key);
+    }
+    
+    return c;
+}
+
+char encrypt_alphabetic_character(char c, int limit_to_sum, int key)
 {
     int alphabet_length = 26;
 
@@ -63,10 +67,8 @@ char encrypt_character(char c, int limit_to_sum, int key)
     {
         return (int) c + key;
     }
-    else
-    {
-        return (int) c + key - alphabet_length;
-    }
+    
+    return (int) c + key - alphabet_length;
 }
 
 int calculate_secure_sum(char c, int key)
@@ -78,8 +80,6 @@ int calculate_secure_sum(char c, int key)
     {
         return lowercase_z_in_decimal - key;
     }
-    else
-    {
-        return uppercase_z_in_decimal - key;
-    }
+
+    return uppercase_z_in_decimal - key;
 }
