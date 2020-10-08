@@ -1,0 +1,15 @@
+1 - ask the user for a key
+
+2 - verify if the key satisfy the conditions
+    1. Be a integer non-negative
+    2. Be a command-line argument (and the only one)
+
+3 - if not satisfy the conditions, should return an error and the status code
+
+4 - ask for one phrase
+
+5 - encrypt the phrase letter by letter
+    1. non-alphabetic char should not be encrypted
+    2. respect letter case
+
+6 - print the encrypted phrase
