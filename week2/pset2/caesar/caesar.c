@@ -6,6 +6,7 @@
 
 string encrypt_text(string plaintext, int key);
 int calculate_secure_sum(char c, int key);
+char encrypt_character(char c, int limit_to_sum, int key);
 
 int main(int argc, string argv[])
 {
@@ -43,15 +44,7 @@ string encrypt_text(string plaintext, int key)
         if (isalpha(c))
         {
             int limit_to_sum = calculate_secure_sum(c, key);
-
-            if ((int) c <= limit_to_sum)
-            {
-                ciphertext[i] = (int) c + key;
-            }
-            else
-            {
-                ciphertext[i] = (int) c + key - 26;
-            }
+            ciphertext[i] = encrypt_character(c, limit_to_sum, key);
         }
         else
         {
@@ -60,6 +53,20 @@ string encrypt_text(string plaintext, int key)
     }
 
     return ciphertext;
+}
+
+char encrypt_character(char c, int limit_to_sum, int key)
+{
+    int alphabet_length = 26;
+
+    if ((int) c <= limit_to_sum)
+    {
+        return (int) c + key;
+    }
+    else
+    {
+        return (int) c + key - alphabet_length;
+    }
 }
 
 int calculate_secure_sum(char c, int key)
