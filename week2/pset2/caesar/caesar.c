@@ -55,7 +55,7 @@ char encrypt_alphabetic_and_non_alphabetic(char c, int key)
         int limit_to_sum = calculate_secure_sum(c, key);
         return encrypt_alphabetic_character(c, limit_to_sum, key);
     }
-    
+
     return c;
 }
 
@@ -67,7 +67,7 @@ char encrypt_alphabetic_character(char c, int limit_to_sum, int key)
     {
         return (int) c + key;
     }
-    
+
     return (int) c + key - alphabet_length;
 }
 
