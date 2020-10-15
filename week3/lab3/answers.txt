@@ -1,0 +1,11 @@
+sort1 uses: bubble sort
+
+How do you know?: During the tests (sorted50000.txt), the time decreased greatly compared to sort3, indicating the counter of the bubble sort algorithm.
+
+sort2 uses: merge sort
+
+How do you know?: During the tests, sort2 was the fastest almost all the time.
+
+sort3 uses: selection sort
+
+How do you know?: through elimination compared to sort1.
