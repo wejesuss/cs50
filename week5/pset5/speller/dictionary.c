@@ -4,17 +4,30 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 
 #include "dictionary.h"
 
 // Number of buckets in hash table
-const unsigned int N = LENGTH * 90;
+const unsigned int N = 150000;
+
+// Represents a node in a hash table
+typedef struct node
+{
+    char word[LENGTH + 1];
+    struct node *next;
+}
+node;
+
+// Prototypes
+bool insert_node(unsigned int code, char *word);
+bool find(node *cursor, const char *word);
+void free_list(node *list);
 
 // Hash table
 node *table[N];
 
-// word for dictionary
+// word for dictionary and check function
 char dic_word[LENGTH + 1];
 
 // size of the dictionary
@@ -23,23 +36,32 @@ int dic_size = 0;
 // Returns true if word is in dictionary, else false
 bool check(const char *word)
 {
-    int code = hash(word);
+    int i;
+    for (i = 0; word[i] != '\0'; i++)
+    {
+        dic_word[i] = tolower(word[i]);
+    }
+
+    dic_word[i] = '\0';
+
+    int code = hash(dic_word);
     node *cursor = table[code];
 
-    return find(cursor, word);
+    return find(cursor, dic_word);
 }
 
 // Hashes word to a number
+// hash function from http://www.cse.yorku.ca/~oz/hash.html
 unsigned int hash(const char *word)
 {
-    int code = tolower(word[0]);
-
-    for (int i = 1; word[i] != '\0'; i++)
+    unsigned int hash_code = 0;
+    for (int i = 0; word[i] != '\0'; i++)
     {
-        code = code * 31 + tolower(word[i]);
+        int c = word[i];
+        hash_code = c + (hash_code << 6) + (hash_code << 16) - hash_code;
     }
 
-    return code % N;
+    return hash_code % N;
 }
 
 // Loads dictionary into memory, returning true if successful, else false
@@ -52,36 +74,20 @@ bool load(const char *dictionary)
         return false;
     }
 
-    char c;
-    int index = 0;
-
-    while (fread(&c, sizeof(char), 1, file))
+    while (fscanf(file, "%s", dic_word) != EOF)
     {
-        if (c == '\n')
+        int code = hash(dic_word);
+        bool inserted = insert_node(code, dic_word);
+        if (!inserted)
         {
-            // Terminate current word
-            dic_word[index] = '\0';
-            int code = hash(dic_word);
-
-            bool inserted = insert_node(code, index, dic_word);
-            if (!inserted)
-            {
-                fclose(file);
-                printf("Error inserting %s.\n", dic_word);
-                unload();
-                return false;
-            }
-
-            // Reset index
-            index = 0;
-            // Update counter
-            dic_size++;
+            fclose(file);
+            printf("Error inserting %s.\n", dic_word);
+            unload();
+            return false;
         }
-        else
-        {
-            dic_word[index] = c;
-            index++;
-        }
+
+        // Update counter
+        dic_size++;
     }
 
     if (ferror(file))
@@ -106,9 +112,9 @@ unsigned int size(void)
 // Unloads dictionary from memory, returning true if successful, else false
 bool unload(void)
 {
+    // Free memory used by a linked list
     for (int i = 0; i < N; i++)
     {
-        // Recursively free memory
         free_list(table[i]);
     }
 
@@ -116,27 +122,17 @@ bool unload(void)
 }
 
 // Add node in hash table
-bool insert_node(unsigned int code, int length, char *word)
+bool insert_node(unsigned int code, char *word)
 {
     node *n = malloc(sizeof(node));
+    if (n == NULL)
+    {
+        return false;
+    }
 
-    do
-    {
-        n->word[length] = word[length];
-        length--;
-    }
-    while (length >= 0);
-
-    if (table[code] == NULL)
-    {
-        n->next = NULL;
-        table[code] = n;
-    }
-    else
-    {
-        n->next = table[code];
-        table[code] = n;
-    }
+    strcpy(n->word, word);
+    n->next = table[code];
+    table[code] = n;
 
     return true;
 }
@@ -149,7 +145,7 @@ bool find(node *cursor, const char *word)
         return false;
     }
 
-    if (strcasecmp(cursor->word, word) == 0)
+    if (strcmp(cursor->word, word) == 0)
     {
         return true;
     }
@@ -157,7 +153,7 @@ bool find(node *cursor, const char *word)
     return find(cursor->next, word);
 }
 
-// Free memory used by a linked list
+// Recursively free memory
 void free_list(node *n)
 {
     if (n == NULL)
